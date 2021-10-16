@@ -33,6 +33,36 @@ const pokemonImage = document.getElementById("pokemon-image");
 const pokemonList = document.getElementById("pokemon-list");
 const nextPokemon = document.getElementById("next-pokemon-button");
 const previousPokemom = document.getElementById("previous-pokemon-button");
+async function generationPokemonList(event) {
+  pokemonList.innerHTML = "";
+  const headerOfList = createElement("div", [], ["card-header"]);
+  headerOfList.textContent = `Pokemons of ${event.target.textContent} type.`;
+  pokemonList.appendChild(headerOfList);
+  const pokemons = createElement("ul", [], ["list-group", "list-group-flush"]);
+  pokemonList.appendChild(pokemons);
+  await generationPokemonElements(event);
+}
+
+async function generationPokemonElements(event) {
+  const response = await axios.get(
+    `https://pokeapi.co/api/v2/type/${event.target.textContent}//`
+  );
+  const newArr = response.data.pokemon.map((element) => element.pokemon.name);
+  newArr.forEach(generationPokemonElement);
+}
+
+function generationPokemonElement(pokemon) {
+  const newPokemon = createElement(
+    "li",
+    [],
+    ["list-group-item"],
+    {},
+    { click: searchPokemonFromTheList }
+  );
+  newPokemon.textContent = pokemon;
+  pokemonList.querySelector("ul").appendChild(newPokemon);
+}
+
 async function getPokemonByNameOrID(data) {
   try {
     const response = await axios.get(
