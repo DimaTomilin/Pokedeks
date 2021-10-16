@@ -113,3 +113,23 @@ function getDataFromInput() {
   }
   return data;
 }
+
+async function backImage() {
+  if (pokemonName.textContent === "Name") {
+    return 0;
+  }
+  const pokemonInformation = await getPokemonByNameOrID(
+    pokemonName.textContent
+  );
+  pokemonImage.setAttribute("src", pokemonInformation.sprites.back_default);
+}
+
+async function frontImage() {
+  if (pokemonName.textContent === "Name") {
+    return 0;
+  }
+  const pokemonInformation = await getPokemonByNameOrID(
+    pokemonName.textContent
+  );
+  pokemonImage.setAttribute("src", pokemonInformation.sprites.front_default);
+}
