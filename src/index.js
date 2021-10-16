@@ -74,6 +74,12 @@ async function getPokemonByNameOrID(data) {
   }
 }
 
+async function searchPokemonFromTheList(event) {
+  inputArea.value = event.target.textContent;
+  pokemonList.innerHTML = "";
+  await showingInformation();
+}
+
 function generatePokemonTypes(types) {
   pokemonTypes.innerHTML = "";
   const newArr = types.map((element) => element.type.name);
