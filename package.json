@@ -1,0 +1,31 @@
+{
+  "name": "pokedeks",
+  "version": "1.0.0",
+  "description": "In this task you will build your own pokédex! Read,learn and use https://pokeapi.co/",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --fix main.js",
+    "format": "prettier -w ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaTomilin/Pokedeks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DimaTomilin/Pokedeks/issues"
+  },
+  "homepage": "https://github.com/DimaTomilin/Pokedeks#readme",
+  "devDependencies": {
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.1"
+  },
+  "dependencies": {
+    "axios": "^0.23.0"
+  }
+}
