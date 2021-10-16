@@ -1,10 +1,12 @@
-function createElement(
-  tagName,
-  children = [],
-  classes = [],
-  attributes = {},
-  eventListeners = {}
-) {
+/* eslint-disable */
+
+/*
+*
+Elements
+*
+*/
+
+function createElement(tagName, children = [], classes = [], attributes = {}, eventListeners = {}) {
   const el = document.createElement(tagName);
   // Adding children
   for (const child of children) {
@@ -23,6 +25,31 @@ function createElement(
     el.addEventListener(event, eventListeners[event]);
   }
   return el;
+}
+
+async function generationListOfTypes(event) {
+    pokemonListOfTypes.innerHTML = "";
+    const headerOfList = createElement("div", [], ["card-header"]);
+    headerOfList.textContent = `Pokemons of ${event.target.textContent} type.`;
+    pokemonListOfTypes.appendChild(headerOfList);
+    const pokemons = createElement("ul", [], ["list-group", "list-group-flush"]);
+    pokemonListOfTypes.appendChild(pokemons);
+    await generationPokemonElements(event);
+}
+
+function generationPokemonElement(pokemon) {
+    const newPokemon = createElement("li", [], ["list-group-item"], {}, { click: searchPokemonFromTheList });
+    newPokemon.textContent = pokemon;
+    pokemonListOfTypes.querySelector("ul").appendChild(newPokemon);
+}
+
+
+/*
+*
+DOM Elements
+*
+*/
+
 const inputArea = document.getElementById("input-area");
 const searchButton = document.getElementById("search-button");
 const pokemonName = document.getElementById("pokemon-name");
@@ -30,53 +57,92 @@ const pokemonWeight = document.getElementById("pokemon-weight");
 const pokemonHeight = document.getElementById("pokemon-height");
 const pokemonTypes = document.getElementById("pokemon-types");
 const pokemonImage = document.getElementById("pokemon-image");
-const pokemonList = document.getElementById("pokemon-list");
+const pokemonListOfTypes = document.getElementById("pokemon-list");
 const nextPokemon = document.getElementById("next-pokemon-button");
-const previousPokemom = document.getElementById("previous-pokemon-button");
-async function generationPokemonList(event) {
-  pokemonList.innerHTML = "";
-  const headerOfList = createElement("div", [], ["card-header"]);
-  headerOfList.textContent = `Pokemons of ${event.target.textContent} type.`;
-  pokemonList.appendChild(headerOfList);
-  const pokemons = createElement("ul", [], ["list-group", "list-group-flush"]);
-  pokemonList.appendChild(pokemons);
-  await generationPokemonElements(event);
+const previousPokemon = document.getElementById("previous-pokemon-button");
+
+
+/*
+*
+Derectives
+*
+*/
+
+function getDataFromInput() {
+    let data = inputArea.value;
+    if (typeof data === "string") {
+      data = data.toLocaleLowerCase();
+    }
+    return data;
 }
 
+async function backImage() {
+    if (pokemonName.textContent === "Name") {
+      return 0;
+    }
+    const pokemonInformation = await getPokemonByNameOrID(pokemonName.textContent);
+    pokemonImage.setAttribute("src", pokemonInformation.sprites.back_default);
+}
+  
+async function frontImage() {
+    if (pokemonName.textContent === "Name") {
+      return 0;
+    }
+    const pokemonInformation = await getPokemonByNameOrID(pokemonName.textContent);
+    pokemonImage.setAttribute("src", pokemonInformation.sprites.front_default);
+}
+  
+async function nextPokemonFunction() {
+  if (inputArea.value === "" || inputArea.value === "0") {
+    inputArea.value = 1;
+  } else {
+    const pokemon = await getPokemonByNameOrID(inputArea.value);
+    const nextPokemonID = pokemon.id + 1;
+    inputArea.value = nextPokemonID;
+  }
+  await showingInformation();
+}
+
+async function previousPokemonFunction() {
+  const pokemon = await getPokemonByNameOrID(inputArea.value);
+  const previousPokemonID = pokemon.id - 1;
+  inputArea.value = previousPokemonID;
+  await showingInformation();
+}
+
+
+/*
+*
+API requests
+*
+*/
+
 async function generationPokemonElements(event) {
-  const response = await axios.get(
-    `https://pokeapi.co/api/v2/type/${event.target.textContent}//`
-  );
+  const response = await axios.get(`https://pokeapi.co/api/v2/type/${event.target.textContent}/`);
   const newArr = response.data.pokemon.map((element) => element.pokemon.name);
   newArr.forEach(generationPokemonElement);
 }
 
-function generationPokemonElement(pokemon) {
-  const newPokemon = createElement(
-    "li",
-    [],
-    ["list-group-item"],
-    {},
-    { click: searchPokemonFromTheList }
-  );
-  newPokemon.textContent = pokemon;
-  pokemonList.querySelector("ul").appendChild(newPokemon);
-}
-
 async function getPokemonByNameOrID(data) {
   try {
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon/${data}/`
-    );
-    return response.data;
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${data}/`);
+    const pokemon = await response.json()
+    return pokemon;
   } catch {
     alert("Pokemon doesn`t exist.");
   }
 }
 
+
+/*
+*
+Pokemon
+*
+*/
+
 async function searchPokemonFromTheList(event) {
   inputArea.value = event.target.textContent;
-  pokemonList.innerHTML = "";
+  pokemonListOfTypes.innerHTML = "";
   await showingInformation();
 }
 
@@ -84,13 +150,7 @@ function generatePokemonTypes(types) {
   pokemonTypes.innerHTML = "";
   const newArr = types.map((element) => element.type.name);
   for (const type of newArr) {
-    const newTypeElement = createElement(
-      "li",
-      [],
-      ["pokemon-type"],
-      {},
-      { click: generationPokemonList }
-    );
+    const newTypeElement = createElement("li", [], ["pokemon-type"], {}, { click: generationListOfTypes });
     newTypeElement.textContent = type;
     pokemonTypes.appendChild(newTypeElement);
   }
@@ -106,30 +166,15 @@ async function showingInformation() {
   pokemonImage.setAttribute("src", pokemonInformation.sprites.front_default);
 }
 
-function getDataFromInput() {
-  let data = inputArea.value;
-  if (typeof data === "string") {
-    data = data.toLocaleLowerCase();
-  }
-  return data;
-}
 
-async function backImage() {
-  if (pokemonName.textContent === "Name") {
-    return 0;
-  }
-  const pokemonInformation = await getPokemonByNameOrID(
-    pokemonName.textContent
-  );
-  pokemonImage.setAttribute("src", pokemonInformation.sprites.back_default);
-}
+/*
+*
+EventListener
+*
+*/
 
-async function frontImage() {
-  if (pokemonName.textContent === "Name") {
-    return 0;
-  }
-  const pokemonInformation = await getPokemonByNameOrID(
-    pokemonName.textContent
-  );
-  pokemonImage.setAttribute("src", pokemonInformation.sprites.front_default);
-}
+searchButton.addEventListener("click", showingInformation);
+pokemonImage.addEventListener("mouseover", backImage);
+pokemonImage.addEventListener("mouseleave", frontImage);
+nextPokemon.addEventListener("click", nextPokemonFunction);
+previousPokemon.addEventListener("click", previousPokemonFunction);
