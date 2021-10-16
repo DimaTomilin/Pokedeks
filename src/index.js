@@ -33,3 +33,31 @@ const pokemonImage = document.getElementById("pokemon-image");
 const pokemonList = document.getElementById("pokemon-list");
 const nextPokemon = document.getElementById("next-pokemon-button");
 const previousPokemom = document.getElementById("previous-pokemon-button");
+async function getPokemonByNameOrID(data) {
+  try {
+    const response = await axios.get(
+      `https://pokeapi.co/api/v2/pokemon/${data}/`
+    );
+    return response.data;
+  } catch {
+    alert("Pokemon doesn`t exist.");
+  }
+}
+
+async function showingInformation() {
+  const data = getDataFromInput();
+  const pokemonInformation = await getPokemonByNameOrID(data);
+  pokemonName.textContent = pokemonInformation.name;
+  pokemonHeight.textContent = `Height: ${pokemonInformation.height}`;
+  pokemonWeight.textContent = `Weight: ${pokemonInformation.weight}`;
+  generatePokemonTypes(pokemonInformation.types);
+  pokemonImage.setAttribute("src", pokemonInformation.sprites.front_default);
+}
+
+function getDataFromInput() {
+  let data = inputArea.value;
+  if (typeof data === "string") {
+    data = data.toLocaleLowerCase();
+  }
+  return data;
+}
