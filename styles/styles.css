@@ -1,62 +1,63 @@
 body {
-    background: url("../Images/pokedex-backgrounds.jpg") no-repeat center center fixed; 
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
+  background: url('../Images/pokedex-backgrounds.jpg') no-repeat center center
+    fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 
-.row{
-    width: 30%;
-    justify-content: center;
-    padding: none;
-    margin-left: 35%;
-    margin-bottom: 20px;
+.row {
+  width: 30%;
+  justify-content: center;
+  padding: none;
+  margin-left: 35%;
+  margin-bottom: 20px;
 }
 
-#title{
-    text-align: center;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    font-size: 60px;
-    font-weight: 700;
+#title {
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  font-size: 60px;
+  font-weight: 700;
 }
 
-#information-list{
-    margin-top: 25px;
-    margin-left: 37%;
-    margin-right: 37%;
-    margin-bottom: 50px;
-    border: black 1px solid;
-    width: 26%;
+#information-list {
+  margin-top: 25px;
+  margin-left: 37%;
+  margin-right: 37%;
+  margin-bottom: 50px;
+  border: black 1px solid;
+  width: 26%;
 }
 
-#pokemon-list{
-    margin-left: 38.5%;
-    margin-right: 38.5%;
-    width: 23%;
+#pokemon-list {
+  margin-left: 38.5%;
+  margin-right: 38.5%;
+  width: 23%;
 }
 
-.center{
-    text-align: center;
+.center {
+  text-align: center;
 }
 
-.card-header{
-    font-size: larger;
-    font-weight: 500;
+.card-header {
+  font-size: larger;
+  font-weight: 500;
 }
 
-#pokemon-image{
-    border: black 1px solid;
-    border-radius: 4px;
-    height: 20em;
-    width: 20em;
+#pokemon-image {
+  border: black 1px solid;
+  border-radius: 4px;
+  height: 20em;
+  width: 20em;
 }
 
-.pokemon-type{
-    margin-left: 20px;
+.pokemon-type {
+  margin-left: 20px;
 }
 
-.far{
-    font-size: 3.2em;
+.far {
+  font-size: 3.2em;
 }
