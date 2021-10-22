@@ -4,6 +4,8 @@ Elements
 *
 */
 
+//const { default: axios } = require('axios');
+
 function createElement(
   tagName,
   children = [],
@@ -59,7 +61,7 @@ DOM Elements
 *
 */
 
-const inputArea = document.getElementById('input-area');
+const inputArea = document.getElementById('id-input-area');
 const searchButton = document.getElementById('search-button');
 const pokemonName = document.getElementById('pokemon-name');
 const pokemonWeight = document.getElementById('pokemon-weight');
@@ -69,6 +71,8 @@ const pokemonImage = document.getElementById('pokemon-image');
 const pokemonListOfTypes = document.getElementById('pokemon-list');
 const nextPokemon = document.getElementById('next-pokemon-button');
 const previousPokemon = document.getElementById('previous-pokemon-button');
+const singInButton = document.getElementById('sing-in-button');
+const usernameInput = document.getElementById('username-area');
 
 /*
 *
@@ -181,6 +185,13 @@ function generatePokemonTypes(types) {
 async function showingInformation() {
   const data = getDataFromInput();
   const pokemonInformation = await getPokemonByNameOrID(data);
+  localStorage.setItem(
+    'pokemon',
+    JSON.stringify({
+      height: pokemonInformation.height,
+      weight: pokemonInformation.weight,
+    })
+  );
   pokemonName.textContent = capitalizeFirstLetter(pokemonInformation.name);
   pokemonHeight.textContent = `Height: ${pokemonInformation.height}`;
   pokemonWeight.textContent = `Weight: ${pokemonInformation.weight}`;
@@ -199,3 +210,23 @@ pokemonImage.addEventListener('mouseover', backImage);
 pokemonImage.addEventListener('mouseleave', frontImage);
 nextPokemon.addEventListener('click', nextPokemonFunction);
 previousPokemon.addEventListener('click', previousPokemonFunction);
+singInButton.addEventListener('click', userSingIn);
+
+async function userSingIn(e) {
+  const username = usernameInput.value.toLowerCase();
+  usernameInput.value = '';
+  localStorage.setItem('username', username);
+  const response = await axios.put(
+    `http://localhost:8080/users/create/${username}`
+  );
+  console.log(response);
+}
+
+/*
+*
+LocalStorage
+*
+*/
+
+localStorage.setItem('username', '');
+localStorage.setItem('pokemon', '');
