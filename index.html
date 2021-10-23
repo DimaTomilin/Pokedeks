@@ -31,7 +31,14 @@
       <div class="col-auto">
         <button id="sing-in-button" class="btn btn-primary">Sing in</button>
       </div>
+      <div class="col-auto">
+        <button id="check-button" class="btn btn-primary">Check user</button>
+      </div>
     </header>
+    <div id="alert1" class="alert success" style="display: none">
+      <span class="closebtn">&times;</span>
+      <div></div>
+    </div>
     <h1 id="title">My Pokedex</h1>
     <main>
       <section>
@@ -55,10 +62,12 @@
             />
           </div>
           <div class="col-auto">
-            <button id="search-button" class="btn btn-primary mb-3">
-              Search
-            </button>
+            <button id="search-button" class="btn btn-primary">Search</button>
           </div>
+        </div>
+        <div id="alert2" class="alert" style="display: none">
+          <span class="closebtn">&times;</span>
+          <div></div>
         </div>
         <div class="center">
           <i
@@ -79,6 +88,25 @@
           <li id="pokemon-height" class="list-group-item">Height:</li>
           <li id="pokemon-types" class="list-group-item">Types:</li>
         </ul>
+        <div id="button-section">
+          <div id="catch-delete">
+            <div class="col-auto">
+              <button id="catch-button" class="btn btn-primary">Catch</button>
+            </div>
+            <div class="col-auto">
+              <button id="delete-button" class="btn btn-primary">Delete</button>
+            </div>
+          </div>
+          <div id="alert3" class="alert success" style="display: none">
+            <span class="closebtn">&times;</span>
+            <div></div>
+          </div>
+          <div class="col-auto">
+            <button id="all-pokemon-button" class="btn btn-primary">
+              All my pokemons
+            </button>
+          </div>
+        </div>
         <div id="pokemon-list" class="card"></div>
       </section>
     </main>

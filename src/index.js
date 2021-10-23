@@ -3,9 +3,6 @@
 Elements
 *
 */
-
-//const { default: axios } = require('axios');
-
 function createElement(
   tagName,
   children = [],
@@ -33,13 +30,17 @@ function createElement(
   return el;
 }
 
-async function generationListOfType(event) {
+function creatingList(header) {
   pokemonListOfTypes.innerHTML = '';
   const headerOfList = createElement('div', [], ['card-header']);
-  headerOfList.textContent = `Pokemons of ${event.target.textContent} type:`;
+  headerOfList.textContent = `Pokemons of ${header}:`;
   pokemonListOfTypes.appendChild(headerOfList);
   const pokemons = createElement('ul', [], ['list-group', 'list-group-flush']);
   pokemonListOfTypes.appendChild(pokemons);
+}
+
+async function generationListOfType(event) {
+  creatingList(`${event.target.textContent} type`);
   await generationPokemonElements(event);
 }
 
@@ -61,18 +62,19 @@ DOM Elements
 *
 */
 
-const inputArea = document.getElementById('id-input-area');
-const searchButton = document.getElementById('search-button');
+const usernameInput = document.getElementById('username-area');
+
+const idInputArea = document.getElementById('id-input-area');
+const nameInputArea = document.getElementById('name-input-area');
+
+const pokemonImage = document.getElementById('pokemon-image');
+
 const pokemonName = document.getElementById('pokemon-name');
 const pokemonWeight = document.getElementById('pokemon-weight');
 const pokemonHeight = document.getElementById('pokemon-height');
 const pokemonTypes = document.getElementById('pokemon-types');
-const pokemonImage = document.getElementById('pokemon-image');
+
 const pokemonListOfTypes = document.getElementById('pokemon-list');
-const nextPokemon = document.getElementById('next-pokemon-button');
-const previousPokemon = document.getElementById('previous-pokemon-button');
-const singInButton = document.getElementById('sing-in-button');
-const usernameInput = document.getElementById('username-area');
 
 /*
 *
@@ -85,49 +87,49 @@ function capitalizeFirstLetter(string) {
 }
 
 function getDataFromInput() {
-  let data = inputArea.value;
-  if (typeof data === 'string') {
-    data = data.toLowerCase();
+  if (idInputArea.value === '') {
+    data = nameInputArea.value.toLowerCase();
+  } else {
+    data = parseInt(idInputArea.value);
+    if (data < 0) {
+      return;
+    }
   }
   return data;
 }
 
 async function backImage() {
   if (pokemonName.textContent === 'Name') {
-    return 0;
+    return;
   }
-  const pokemonInformation = await getPokemonByNameOrID(
-    pokemonName.textContent.toLowerCase()
-  );
-  pokemonImage.setAttribute('src', pokemonInformation.sprites.back_default);
+  const pokemon = JSON.parse(localStorage.getItem('pokemon'));
+  pokemonImage.setAttribute('src', pokemon.back_pic);
 }
 
 async function frontImage() {
   if (pokemonName.textContent === 'Name') {
-    return 0;
+    return;
   }
-  const pokemonInformation = await getPokemonByNameOrID(
-    pokemonName.textContent.toLowerCase()
-  );
-  pokemonImage.setAttribute('src', pokemonInformation.sprites.front_default);
+  const pokemon = JSON.parse(localStorage.getItem('pokemon'));
+  pokemonImage.setAttribute('src', pokemon.front_pic);
 }
 
 async function nextPokemonFunction() {
-  if (inputArea.value === '' || inputArea.value === '0') {
-    inputArea.value = 1;
+  if (idInputArea.value === '' || idInputArea.value === '0') {
+    idInputArea.value = 1;
   } else {
-    const pokemon = await getPokemonByNameOrID(inputArea.value.toLowerCase());
+    const pokemon = JSON.parse(localStorage.getItem('pokemon'));
     const nextPokemonID = pokemon.id + 1;
-    inputArea.value = nextPokemonID;
+    idInputArea.value = nextPokemonID;
   }
-  await showingInformation();
+  await searchPokemon();
 }
 
 async function previousPokemonFunction() {
-  const pokemon = await getPokemonByNameOrID(inputArea.value.toLowerCase());
+  const pokemon = JSON.parse(localStorage.getItem('pokemon'));
   const previousPokemonID = pokemon.id - 1;
-  inputArea.value = previousPokemonID;
-  await showingInformation();
+  idInputArea.value = previousPokemonID;
+  await searchPokemon();
 }
 
 /*
@@ -138,19 +140,45 @@ API requests
 
 async function generationPokemonElements(event) {
   const response = await axios.get(
-    `https://pokeapi.co/api/v2/type/${event.target.textContent}/`
+    `http://localhost:8080/pokemon/type/${event.target.textContent}`,
+    {
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
   );
-  const newArr = response.data.pokemon.map((element) => element.pokemon.name);
-  newArr.forEach(generationPokemonElement);
+  response.data.forEach(generationPokemonElement);
 }
 
 async function getPokemonByNameOrID(data) {
   try {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${data}/`);
-    const pokemon = await response.json();
-    return pokemon;
+    let response;
+    if (typeof data === 'string') {
+      response = await axios.get(
+        `http://localhost:8080/pokemon/query?name=${data}`,
+        {
+          headers: {
+            username: localStorage.getItem('username'),
+          },
+        }
+      );
+    } else {
+      response = await axios.get(`http://localhost:8080/pokemon/get/${data}`, {
+        headers: {
+          username: localStorage.getItem('username'),
+        },
+      });
+    }
+    return response.data;
   } catch {
-    alert('Pokemon doesn`t exist.');
+    let message;
+    if (localStorage.getItem('username') === '') {
+      message = '401 Unknown username. Please make sing in.';
+    } else {
+      message = '404 Pokemon not found!';
+    }
+    showingAlert2(message);
+    throw Error;
   }
 }
 
@@ -161,15 +189,15 @@ Pokemon
 */
 
 async function searchPokemonFromTheList(event) {
-  inputArea.value = event.target.textContent;
+  nameInputArea.value = event.target.textContent;
+  idInputArea.value = '';
   pokemonListOfTypes.innerHTML = '';
-  await showingInformation();
+  await searchPokemon();
 }
 
 function generatePokemonTypes(types) {
   pokemonTypes.innerHTML = '';
-  const newArr = types.map((element) => element.type.name);
-  for (const type of newArr) {
+  for (const type of types) {
     const newTypeElement = createElement(
       'li',
       [],
@@ -182,21 +210,25 @@ function generatePokemonTypes(types) {
   }
 }
 
-async function showingInformation() {
-  const data = getDataFromInput();
-  const pokemonInformation = await getPokemonByNameOrID(data);
-  localStorage.setItem(
-    'pokemon',
-    JSON.stringify({
-      height: pokemonInformation.height,
-      weight: pokemonInformation.weight,
-    })
-  );
-  pokemonName.textContent = capitalizeFirstLetter(pokemonInformation.name);
-  pokemonHeight.textContent = `Height: ${pokemonInformation.height}`;
-  pokemonWeight.textContent = `Weight: ${pokemonInformation.weight}`;
-  generatePokemonTypes(pokemonInformation.types);
-  pokemonImage.setAttribute('src', pokemonInformation.sprites.front_default);
+async function searchPokemon() {
+  try {
+    const data = getDataFromInput();
+    const pokemon = await getPokemonByNameOrID(data);
+    localStorage.setItem('pokemon', JSON.stringify(pokemon));
+    showingPokemon(pokemon);
+  } catch {
+    return;
+  }
+}
+
+function showingPokemon(pokemon) {
+  pokemonName.textContent = capitalizeFirstLetter(pokemon.name);
+  nameInputArea.value = capitalizeFirstLetter(pokemon.name);
+  idInputArea.value = pokemon.id;
+  pokemonHeight.textContent = `Height: ${pokemon.height}`;
+  pokemonWeight.textContent = `Weight: ${pokemon.weight}`;
+  generatePokemonTypes(pokemon.types);
+  pokemonImage.setAttribute('src', pokemon.front_pic);
 }
 
 /*
@@ -205,21 +237,131 @@ EventListener
 *
 */
 
-searchButton.addEventListener('click', showingInformation);
+document
+  .getElementById('search-button')
+  .addEventListener('click', searchPokemon);
 pokemonImage.addEventListener('mouseover', backImage);
 pokemonImage.addEventListener('mouseleave', frontImage);
-nextPokemon.addEventListener('click', nextPokemonFunction);
-previousPokemon.addEventListener('click', previousPokemonFunction);
-singInButton.addEventListener('click', userSingIn);
+document
+  .getElementById('next-pokemon-button')
+  .addEventListener('click', nextPokemonFunction);
+document
+  .getElementById('previous-pokemon-button')
+  .addEventListener('click', previousPokemonFunction);
+document.getElementById('sing-in-button').addEventListener('click', userSingIn);
+document.getElementById('catch-button').addEventListener('click', catchPokemon);
+document
+  .getElementById('delete-button')
+  .addEventListener('click', deletePokemon);
+document
+  .getElementById('all-pokemon-button')
+  .addEventListener('click', showAllPokemons);
+document.getElementById('check-button').addEventListener('click', checkUser);
 
-async function userSingIn(e) {
+async function checkUser() {
+  const response = await axios.post(
+    `http://localhost:8080/users/info`,
+    {},
+    {
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
+  );
+  showingAlert(
+    document.getElementById('alert1'),
+    response.status,
+    response.data
+  );
+}
+
+async function showAllPokemons() {
+  const response = await axios.get(`http://localhost:8080/pokemon/`, {
+    headers: {
+      username: localStorage.getItem('username'),
+    },
+  });
+  creatingList(capitalizeFirstLetter(localStorage.getItem('username')));
+  response.data.forEach((pokemon) => generationPokemonElement(pokemon));
+}
+
+async function catchPokemon() {
+  const pokemonId = JSON.parse(localStorage.getItem('pokemon')).id;
+  const response = await fetch(
+    `http://localhost:8080/pokemon/catch/${pokemonId}`,
+    {
+      method: 'PUT',
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
+  );
+  const body = await response.text();
+  showingAlert(document.getElementById('alert3'), response.status, body);
+}
+
+async function deletePokemon() {
+  const pokemonId = JSON.parse(localStorage.getItem('pokemon')).id;
+  const response = await fetch(
+    `http://localhost:8080/pokemon/release/${pokemonId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
+  );
+  const body = await response.text();
+  showingAlert(document.getElementById('alert3'), response.status, body);
+}
+
+async function userSingIn() {
   const username = usernameInput.value.toLowerCase();
   usernameInput.value = '';
   localStorage.setItem('username', username);
-  const response = await axios.put(
-    `http://localhost:8080/users/create/${username}`
+  const response = await fetch(
+    `http://localhost:8080/users/create/${username}`,
+    {
+      method: 'PUT',
+    }
   );
-  console.log(response);
+  const body = await response.text();
+  showingAlert(document.getElementById('alert1'), response.status, body);
+}
+
+function showingAlert(object, status, message) {
+  object.classList.remove(object.classList.item(1));
+  if (status === 200) {
+    object.classList.add('success');
+    object.querySelector(
+      'div'
+    ).innerHTML = `<strong>Success!<strong> ${message}`;
+  } else {
+    object.querySelector(
+      'div'
+    ).innerHTML = `<strong>Error!<strong> ${status} ${message}`;
+  }
+  object.style.display = 'block';
+  object.style.opacity = '1';
+}
+
+function showingAlert2(message) {
+  const alert2 = document.getElementById('alert2');
+  alert2.querySelector('div').innerHTML = `<strong>Error!<strong> ${message}`;
+  alert2.style.display = 'block';
+  alert2.style.opacity = '1';
+}
+
+const closeButtons = document.getElementsByClassName('closebtn');
+
+for (const button of closeButtons) {
+  button.onclick = function () {
+    const div = this.parentElement;
+    div.style.opacity = '0';
+    setTimeout(function () {
+      div.style.display = 'none';
+    }, 600);
+  };
 }
 
 /*
