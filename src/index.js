@@ -260,7 +260,7 @@ document.getElementById('check-button').addEventListener('click', checkUser);
 
 async function checkUser() {
   const response = await axios.post(
-    `http://localhost:8080/users/info`,
+    `http://localhost:8080/user/info`,
     {},
     {
       headers: {
@@ -320,7 +320,7 @@ async function userSingIn() {
   usernameInput.value = '';
   localStorage.setItem('username', username);
   const response = await fetch(
-    `http://localhost:8080/users/create/${username}`,
+    `http://localhost:8080/user/create/${username}`,
     {
       method: 'PUT',
     }
