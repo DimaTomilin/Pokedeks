@@ -56,18 +56,41 @@ function generationPokemonElement(pokemon) {
   pokemonListOfTypes.querySelector('ul').appendChild(newPokemon);
 }
 
+function generatePokemonTypes(types) {
+  pokemonTypes.innerHTML = '';
+  for (const type of types) {
+    const newTypeElement = createElement(
+      'li',
+      [],
+      ['pokemon-type'],
+      {},
+      { click: generationListOfType }
+    );
+    newTypeElement.textContent = type;
+    pokemonTypes.appendChild(newTypeElement);
+  }
+}
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /*
 *
 DOM Elements
 *
 */
-
-const usernameInput = document.getElementById('username-area');
-
-const idInputArea = document.getElementById('id-input-area');
-const nameInputArea = document.getElementById('name-input-area');
-
-const pokemonImage = document.getElementById('pokemon-image');
 
 const pokemonName = document.getElementById('pokemon-name');
 const pokemonWeight = document.getElementById('pokemon-weight');
@@ -76,11 +99,41 @@ const pokemonTypes = document.getElementById('pokemon-types');
 
 const pokemonListOfTypes = document.getElementById('pokemon-list');
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /*
 *
 Derectives
 *
 */
+const pokemonImage = document.getElementById('pokemon-image');
+const idInputArea = document.getElementById('id-input-area');
+const nameInputArea = document.getElementById('name-input-area');
+const closeButtons = document.getElementsByClassName('closebtn');
+
+for (const button of closeButtons) {
+  button.onclick = function () {
+    const div = this.parentElement;
+    div.style.opacity = '0';
+    setTimeout(function () {
+      div.style.display = 'none';
+    }, 600);
+  };
+}
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -114,24 +167,22 @@ async function frontImage() {
   pokemonImage.setAttribute('src', pokemon.front_pic);
 }
 
-async function nextPokemonFunction() {
-  if (idInputArea.value === '' || idInputArea.value === '0') {
-    idInputArea.value = 1;
-  } else {
-    const pokemon = JSON.parse(localStorage.getItem('pokemon'));
-    const nextPokemonID = pokemon.id + 1;
-    idInputArea.value = nextPokemonID;
-  }
-  await searchPokemon();
-}
-
-async function previousPokemonFunction() {
-  const pokemon = JSON.parse(localStorage.getItem('pokemon'));
-  const previousPokemonID = pokemon.id - 1;
-  idInputArea.value = previousPokemonID;
-  await searchPokemon();
-}
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /*
 *
 API requests
@@ -182,99 +233,6 @@ async function getPokemonByNameOrID(data) {
   }
 }
 
-/*
-*
-Pokemon
-*
-*/
-
-async function searchPokemonFromTheList(event) {
-  nameInputArea.value = event.target.textContent;
-  idInputArea.value = '';
-  pokemonListOfTypes.innerHTML = '';
-  await searchPokemon();
-}
-
-function generatePokemonTypes(types) {
-  pokemonTypes.innerHTML = '';
-  for (const type of types) {
-    const newTypeElement = createElement(
-      'li',
-      [],
-      ['pokemon-type'],
-      {},
-      { click: generationListOfType }
-    );
-    newTypeElement.textContent = type;
-    pokemonTypes.appendChild(newTypeElement);
-  }
-}
-
-async function searchPokemon() {
-  try {
-    const data = getDataFromInput();
-    const pokemon = await getPokemonByNameOrID(data);
-    localStorage.setItem('pokemon', JSON.stringify(pokemon));
-    showingPokemon(pokemon);
-  } catch {
-    return;
-  }
-}
-
-function showingPokemon(pokemon) {
-  pokemonName.textContent = capitalizeFirstLetter(pokemon.name);
-  nameInputArea.value = capitalizeFirstLetter(pokemon.name);
-  idInputArea.value = pokemon.id;
-  pokemonHeight.textContent = `Height: ${pokemon.height}`;
-  pokemonWeight.textContent = `Weight: ${pokemon.weight}`;
-  generatePokemonTypes(pokemon.types);
-  pokemonImage.setAttribute('src', pokemon.front_pic);
-}
-
-/*
-*
-EventListener
-*
-*/
-
-document
-  .getElementById('search-button')
-  .addEventListener('click', searchPokemon);
-pokemonImage.addEventListener('mouseover', backImage);
-pokemonImage.addEventListener('mouseleave', frontImage);
-document
-  .getElementById('next-pokemon-button')
-  .addEventListener('click', nextPokemonFunction);
-document
-  .getElementById('previous-pokemon-button')
-  .addEventListener('click', previousPokemonFunction);
-document.getElementById('sing-in-button').addEventListener('click', userSingIn);
-document.getElementById('catch-button').addEventListener('click', catchPokemon);
-document
-  .getElementById('delete-button')
-  .addEventListener('click', deletePokemon);
-document
-  .getElementById('all-pokemon-button')
-  .addEventListener('click', showAllPokemons);
-document.getElementById('check-button').addEventListener('click', checkUser);
-
-async function checkUser() {
-  const response = await axios.post(
-    `http://localhost:8080/user/info`,
-    {},
-    {
-      headers: {
-        username: localStorage.getItem('username'),
-      },
-    }
-  );
-  showingAlert(
-    document.getElementById('alert1'),
-    response.status,
-    response.data
-  );
-}
-
 async function showAllPokemons() {
   const response = await axios.get(`http://localhost:8080/pokemon/`, {
     headers: {
@@ -315,6 +273,166 @@ async function deletePokemon() {
   showingAlert(document.getElementById('alert3'), response.status, body);
 }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+*
+Pokemon
+*
+*/
+async function nextPokemonFunction() {
+  if (idInputArea.value === '' || idInputArea.value === '0') {
+    idInputArea.value = 1;
+  } else {
+    const pokemon = JSON.parse(localStorage.getItem('pokemon'));
+    const nextPokemonID = pokemon.id + 1;
+    idInputArea.value = nextPokemonID;
+  }
+  await searchPokemon();
+}
+
+async function previousPokemonFunction() {
+  const pokemon = JSON.parse(localStorage.getItem('pokemon'));
+  const previousPokemonID = pokemon.id - 1;
+  idInputArea.value = previousPokemonID;
+  await searchPokemon();
+}
+
+async function searchPokemonFromTheList(event) {
+  nameInputArea.value = event.target.textContent;
+  idInputArea.value = '';
+  pokemonListOfTypes.innerHTML = '';
+  await searchPokemon();
+}
+
+async function searchPokemon() {
+  try {
+    const data = getDataFromInput();
+    const pokemon = await getPokemonByNameOrID(data);
+    localStorage.setItem('pokemon', JSON.stringify(pokemon));
+    showingPokemon(pokemon);
+  } catch {
+    return;
+  }
+}
+
+function showingPokemon(pokemon) {
+  pokemonName.textContent = capitalizeFirstLetter(pokemon.name);
+  nameInputArea.value = capitalizeFirstLetter(pokemon.name);
+  idInputArea.value = pokemon.id;
+  pokemonHeight.textContent = `Height: ${pokemon.height}`;
+  pokemonWeight.textContent = `Weight: ${pokemon.weight}`;
+  generatePokemonTypes(pokemon.types);
+  pokemonImage.setAttribute('src', pokemon.front_pic);
+}
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+*
+EventListener
+*
+*/
+
+document
+  .getElementById('search-button')
+  .addEventListener('click', searchPokemon);
+pokemonImage.addEventListener('mouseover', backImage);
+pokemonImage.addEventListener('mouseleave', frontImage);
+document
+  .getElementById('next-pokemon-button')
+  .addEventListener('click', nextPokemonFunction);
+document
+  .getElementById('previous-pokemon-button')
+  .addEventListener('click', previousPokemonFunction);
+
+document.getElementById('catch-button').addEventListener('click', catchPokemon);
+document
+  .getElementById('delete-button')
+  .addEventListener('click', deletePokemon);
+document
+  .getElementById('all-pokemon-button')
+  .addEventListener('click', showAllPokemons);
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+*
+LocalStorage
+*
+*/
+
+localStorage.setItem('username', '');
+localStorage.setItem('pokemon', '');
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+*
+Header part
+*
+*/
+const usernameInput = document.getElementById('username-area');
+
+document.getElementById('sing-in-button').addEventListener('click', userSingIn);
+document.getElementById('check-button').addEventListener('click', checkUser);
+
 async function userSingIn() {
   const username = usernameInput.value.toLowerCase();
   usernameInput.value = '';
@@ -329,6 +447,43 @@ async function userSingIn() {
   showingAlert(document.getElementById('alert1'), response.status, body);
 }
 
+async function checkUser() {
+  const response = await axios.post(
+    `http://localhost:8080/user/info`,
+    {},
+    {
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
+  );
+  showingAlert(
+    document.getElementById('alert1'),
+    response.status,
+    response.data
+  );
+}
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/*
+*
+Alerts
+*
+*/
 function showingAlert(object, status, message) {
   object.classList.remove(object.classList.item(1));
   if (status === 200) {
@@ -351,24 +506,3 @@ function showingAlert2(message) {
   alert2.style.display = 'block';
   alert2.style.opacity = '1';
 }
-
-const closeButtons = document.getElementsByClassName('closebtn');
-
-for (const button of closeButtons) {
-  button.onclick = function () {
-    const div = this.parentElement;
-    div.style.opacity = '0';
-    setTimeout(function () {
-      div.style.display = 'none';
-    }, 600);
-  };
-}
-
-/*
-*
-LocalStorage
-*
-*/
-
-localStorage.setItem('username', '');
-localStorage.setItem('pokemon', '');
