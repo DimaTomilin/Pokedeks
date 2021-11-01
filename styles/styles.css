@@ -7,17 +7,110 @@ body {
   background-size: cover;
 }
 
-.row {
+button:focus {
+  background-color: rgb(128, 39, 39) !important;
+}
+
+button:active {
+  background-color: rgb(128, 39, 39) !important;
+}
+
+.pokemon-type {
+  margin-left: 20px;
+}
+
+.far {
+  font-size: 3.2em !important;
+  margin: 0.5em !important;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.card-header {
+  font-size: larger;
+  font-weight: 500;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: rgb(222, 128, 58);
+  border-bottom: 2px solid black;
+  height: 80px;
+}
+
+.header input {
+  margin-right: 20px;
+  height: 25px;
+  width: 130px;
+}
+
+.header button {
+  background-color: brown;
+  border: black;
+  padding: 0px 3px !important;
+  width: 70px;
+  height: 25px;
+  margin-right: 20px;
+}
+
+#check-button {
+  width: 90px;
+}
+
+.header button:hover {
+  background-color: rgb(128, 39, 39);
+}
+
+#all-pokemon-button {
+  margin-top: 0px;
+  margin-bottom: 30px;
+  margin-left: 35%;
   width: 30%;
+  background-color: brown;
+  border: black;
+}
+
+#catch-delete {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+
+#catch-delete button,
+#search-button {
+  width: 100px;
+  background-color: brown;
+  border: black;
+  margin: 10px;
+}
+
+#catch-delete button:hover,
+#search-button:hover,
+#all-pokemon-button:hover {
+  background-color: rgb(128, 39, 39);
+}
+
+#search-area {
+  width: 40% !important;
   justify-content: center;
   padding: none;
-  margin-left: 35%;
-  margin-bottom: 20px;
+  margin-left: 30% !important;
+  margin-bottom: 15px;
 }
 
 #title {
   text-align: center;
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 50px;
   font-size: 60px;
   font-weight: 700;
@@ -27,7 +120,7 @@ body {
   margin-top: 25px;
   margin-left: 37%;
   margin-right: 37%;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   border: black 1px solid;
   width: 26%;
 }
@@ -38,15 +131,6 @@ body {
   width: 23%;
 }
 
-.center {
-  text-align: center;
-}
-
-.card-header {
-  font-size: larger;
-  font-weight: 500;
-}
-
 #pokemon-image {
   border: black 1px solid;
   border-radius: 4px;
@@ -54,10 +138,61 @@ body {
   width: 20em;
 }
 
-.pokemon-type {
-  margin-left: 20px;
+/*
+*
+Error messages
+*
+*/
+#alert2,
+#alert3 {
+  width: 40%;
+  margin: 0px 30% 15px;
 }
 
-.far {
-  font-size: 3.2em;
+.alert {
+  width: 60%;
+  padding: 20px;
+  background-color: brown;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.6s;
+  margin: 25px 20% 0px;
+}
+
+.alert.success {
+  background-color: #04aa6d;
+}
+.alert.info {
+  background-color: #2196f3;
+}
+.alert.warning {
+  background-color: #ff9800;
+}
+
+.closebtn {
+  margin-left: 15px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 20px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.closebtn:hover {
+  color: black;
+}
+
+/*
+*
+Media
+*
+*/
+@media only screen and (max-width: 1150px) {
+  .row {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+  }
 }
