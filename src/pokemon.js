@@ -8,7 +8,7 @@ import {
 } from './derectives';
 import { getPokemonByNameOrID } from './server-requests';
 
-const pokemonName = document.getElementById('pokemon-name');
+export const pokemonName = document.getElementById('pokemon-name');
 const pokemonWeight = document.getElementById('pokemon-weight');
 const pokemonHeight = document.getElementById('pokemon-height');
 

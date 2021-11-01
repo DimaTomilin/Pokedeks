@@ -1,3 +1,5 @@
+import { pokemonName } from './pokemon';
+
 export const pokemonImage = document.getElementById('pokemon-image');
 pokemonImage.addEventListener('mouseover', backImage);
 pokemonImage.addEventListener('mouseleave', frontImage);
@@ -22,6 +24,7 @@ export function capitalizeFirstLetter(string) {
 }
 
 export function getDataFromInput() {
+  let data;
   if (idInputArea.value === '') {
     data = nameInputArea.value.toLowerCase();
   } else {

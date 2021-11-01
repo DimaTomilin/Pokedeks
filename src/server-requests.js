@@ -1,6 +1,7 @@
 import { generationPokemonElement, creatingList } from './elements';
 import { capitalizeFirstLetter } from './derectives';
 import { showingAlert, showingAlert2 } from './alerts';
+import axios from 'axios';
 
 document.getElementById('catch-button').addEventListener('click', catchPokemon);
 document
@@ -12,7 +13,7 @@ document
 
 export async function generationPokemonElements(event) {
   const response = await axios.get(
-    `http://localhost:8080/pokemon/type/${event.target.textContent}`,
+    `https://salty-thicket-98454.herokuapp.com/pokemon/type/${event.target.textContent}`,
     {
       headers: {
         username: localStorage.getItem('username'),
@@ -27,7 +28,7 @@ export async function getPokemonByNameOrID(data) {
     let response;
     if (typeof data === 'string') {
       response = await axios.get(
-        `http://localhost:8080/pokemon/query?name=${data}`,
+        `https://salty-thicket-98454.herokuapp.com/pokemon/query?name=${data}`,
         {
           headers: {
             username: localStorage.getItem('username'),
@@ -35,11 +36,14 @@ export async function getPokemonByNameOrID(data) {
         }
       );
     } else {
-      response = await axios.get(`http://localhost:8080/pokemon/get/${data}`, {
-        headers: {
-          username: localStorage.getItem('username'),
-        },
-      });
+      response = await axios.get(
+        `https://salty-thicket-98454.herokuapp.com/pokemon/get/${data}`,
+        {
+          headers: {
+            username: localStorage.getItem('username'),
+          },
+        }
+      );
     }
     return response.data;
   } catch {
@@ -55,11 +59,14 @@ export async function getPokemonByNameOrID(data) {
 }
 
 async function showAllPokemons() {
-  const response = await axios.get(`http://localhost:8080/pokemon/`, {
-    headers: {
-      username: localStorage.getItem('username'),
-    },
-  });
+  const response = await axios.get(
+    `https://salty-thicket-98454.herokuapp.com/pokemon/`,
+    {
+      headers: {
+        username: localStorage.getItem('username'),
+      },
+    }
+  );
   creatingList(capitalizeFirstLetter(localStorage.getItem('username')));
   response.data.forEach((pokemon) => generationPokemonElement(pokemon));
 }
@@ -67,7 +74,7 @@ async function showAllPokemons() {
 async function catchPokemon() {
   const pokemonId = JSON.parse(localStorage.getItem('pokemon')).id;
   const response = await fetch(
-    `http://localhost:8080/pokemon/catch/${pokemonId}`,
+    `https://salty-thicket-98454.herokuapp.com/pokemon/catch/${pokemonId}`,
     {
       method: 'PUT',
       headers: {
@@ -82,7 +89,7 @@ async function catchPokemon() {
 async function deletePokemon() {
   const pokemonId = JSON.parse(localStorage.getItem('pokemon')).id;
   const response = await fetch(
-    `http://localhost:8080/pokemon/release/${pokemonId}`,
+    `https://salty-thicket-98454.herokuapp.com/pokemon/release/${pokemonId}`,
     {
       method: 'DELETE',
       headers: {

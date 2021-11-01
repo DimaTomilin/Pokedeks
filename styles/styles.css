@@ -7,17 +7,28 @@ body {
   background-size: cover;
 }
 
+button:focus {
+  background-color: rgb(128, 39, 39) !important;
+}
+
+button:active {
+  background-color: rgb(128, 39, 39) !important;
+}
+
 .pokemon-type {
   margin-left: 20px;
 }
 
 .far {
-  font-size: 3.2em;
-  margin: 0.5em;
+  font-size: 3.2em !important;
+  margin: 0.5em !important;
 }
 
 .center {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
 }
 
 .card-header {
